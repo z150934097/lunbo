@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+	<title>Document</title>
+	<style>
+		body,ul,li{
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		html,body,.out{
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+		.box{
+			width: 500%;
+			height: 100%;
+		}
+		.box li{
+			width: 20%;
+			height: 100%;
+			float: left;
+			font-size: 100px;
+			line-height: 600px;
+			text-align: center;
+			color: #fff;
+		}
+		.box li:nth-child(1){
+			background-color: red;
+		}
+		.box li:nth-child(2){
+			background-color: blue;
+		}
+		.box li:nth-child(3){
+			background-color: green;
+		}
+		.box li:nth-child(4){
+			background-color: yellow;
+		}
+		.box li:nth-child(5){
+			background-color: pink;
+		}
+	</style>
+</head>
+<body>
+	<div class="out">
+		<ul class="box">
+			<li>1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+			<li>5</li>
+		</ul>
+	</div>
+	<script>
+		var out=document.querySelector('.out');
+		var ul=out.querySelector('.box');
+		var lis=ul.querySelectorAll('li');
+		var w=out.offsetWidth;console.log(w)
+		var i=0;
+		var movex=0;
+		if ('ontouchstart' in window) {
+			var mousedown='touchstart';
+			var mouseup='touchend';
+			var mousemove='touchmove';
+		}else{
+			var mousedown='mousedown';
+			var mouseup='mouseup';
+			var mousemove='mousemove';
+		}
+		ul.addEventListener(mousedown,function(e){
+			var mw;
+			var lexw=0;
+			var dir;
+			var stime=e.timeStamp;
+			e.preventDefault();
+			var e='ontouchstart' in window?e.changedTouches[0]:e;
+			var dw=e.clientX;
+			ul.style.transition="none";
+			ul.addEventListener(mousemove,function(e){
+				var e='ontouchstart' in window?e.changedTouches[0]:e;
+				mw=e.clientX;
+				lexw=mw-dw;
+				dir=lexw>0?'right':'left';
+				ul.style.transform="translateX("+(lexw+movex)+"px)";
+			})
+			ul.addEventListener(mouseup,function(){
+				var etime=e.timeStamp;
+				var ct=etime-stime;
+				if (mw>dw) {
+					move();
+				}else if (mw<dw) {
+					move();
+				}
+				function move(){
+					if (Math.abs(lexw)>(w/2)||(ct<100&&Math.abs(lexw)>30)) {
+						if (dir=='right') {
+							i--;
+						}else if (dir=='left') {
+							i++;
+						};
+						if (i<0) {
+							i=0;
+						}else if (i>lis.length-1) {
+							i=lis.length-1;
+						};
+						movex=-i*w;
+						ul.style.transition="transform .5s";
+						ul.style.transform="translateX("+movex+"px)";
+					}else if (Math.abs(lexw)<(w/2)) {
+						movex=-i*w;
+						ul.style.transform="translateX("+movex+"px)";
+					};
+				}
+				ul.onmousemove='';
+				ul.onmouseup='';
+			})
+		})
+	</script>
+</body>
+</html>
